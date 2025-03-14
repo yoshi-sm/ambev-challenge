@@ -36,12 +36,20 @@ public class Program
                 )
             );
 
+            // Configure PostgreSQL
+            builder.Services.AddDbContext<WriteDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+            // Configure MongoDB
+            builder.Services.Configure<MongoDbSettings>(
+                builder.Configuration.GetSection("MongoDbSettings"));
+            builder.Services.AddSingleton<ReadDbContext>();
+
+
+
+
             builder.Services.AddJwtAuthentication(builder.Configuration);
-
             builder.RegisterDependencies();
-
             builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ApplicationLayer).Assembly);
-
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssemblies(
