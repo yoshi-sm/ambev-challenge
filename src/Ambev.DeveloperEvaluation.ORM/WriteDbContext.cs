@@ -1,15 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.ORM;
 
-// PostgreSQL DbContext for write operations
 public class WriteDbContext : DbContext
 {
+    public DbSet<Sale> Sales {get; set;} 
+    public DbSet<SaleItem> SaleItems { get; set;}
+
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {
     }
@@ -17,6 +23,28 @@ public class WriteDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
+    }
+}
+
+public class WriteDbContextFactory : IDesignTimeDbContextFactory<WriteDbContext>
+{
+    public WriteDbContext CreateDbContext(string[] args)
+    {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var builder = new DbContextOptionsBuilder<WriteDbContext>();
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        builder.UseNpgsql(
+               connectionString,
+               b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
+        );
+
+        return new WriteDbContext(builder.Options);
     }
 }
