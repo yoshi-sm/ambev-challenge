@@ -34,11 +34,11 @@ public class WriteDbContextFactory : IDesignTimeDbContextFactory<WriteDbContext>
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Development.json")
             .Build();
 
         var builder = new DbContextOptionsBuilder<WriteDbContext>();
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = configuration.GetConnectionString("PostgreSQLConnection");
 
         builder.UseNpgsql(
                connectionString,
