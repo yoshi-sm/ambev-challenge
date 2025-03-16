@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
+namespace Ambev.DeveloperEvaluation.ORM.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSalesAndSalesItems : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,9 +19,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                     SaleNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     SaleDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     BranchId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BranchName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -58,10 +56,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     SaleId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    ProductBasePrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)

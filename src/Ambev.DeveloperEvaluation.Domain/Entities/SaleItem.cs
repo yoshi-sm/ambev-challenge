@@ -22,4 +22,9 @@ public class SaleItem : BaseEntity
     }
 
     public SaleItem() {}
+
+    public void Cancel()
+    {
+        IsCancelled = true;
+    }
 }

@@ -3,20 +3,17 @@ using System;
 using Ambev.DeveloperEvaluation.ORM;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
+namespace Ambev.DeveloperEvaluation.ORM.Migrations
 {
     [DbContext(typeof(WriteDbContext))]
-    [Migration("20250315221156_AddSalesAndSalesItems")]
-    partial class AddSalesAndSalesItems
+    partial class WriteDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,10 +29,16 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsCancelled")
                         .ValueGeneratedOnAdd()
@@ -76,6 +79,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -83,9 +89,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("Id");
@@ -143,100 +146,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations.WriteDb
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Sale", b =>
-                {
-                    b.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObjects.Branch", "Branch", b1 =>
-                        {
-                            b1.Property<Guid>("SaleId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("ExternalId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("BranchId");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
-                                .HasColumnName("BranchName");
-
-                            b1.HasKey("SaleId");
-
-                            b1.ToTable("Sales");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SaleId");
-                        });
-
-                    b.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObjects.Customer", "Customer", b1 =>
-                        {
-                            b1.Property<Guid>("SaleId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("ExternalId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("CustomerId");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
-                                .HasColumnName("CustomerName");
-
-                            b1.HasKey("SaleId");
-
-                            b1.ToTable("Sales");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SaleId");
-                        });
-
-                    b.Navigation("Branch")
-                        .IsRequired();
-
-                    b.Navigation("Customer")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SaleItem", b =>
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Sale", null)
                         .WithMany("Items")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Ambev.DeveloperEvaluation.Domain.ValueObjects.Product", "Product", b1 =>
-                        {
-                            b1.Property<Guid>("SaleItemId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("ExternalId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("ProductId");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
-                                .HasColumnName("ProductName");
-
-                            b1.Property<decimal>("Price")
-                                .HasColumnType("decimal(18, 2)")
-                                .HasColumnName("ProductBasePrice");
-
-                            b1.HasKey("SaleItemId");
-
-                            b1.ToTable("SaleItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SaleItemId");
-                        });
-
-                    b.Navigation("Product")
                         .IsRequired();
                 });
 

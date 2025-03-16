@@ -29,4 +29,13 @@ public class Sale : BaseEntity
         IsCancelled = isCancelled;
         Items = items;
     }
+
+    public void Cancel()
+    {
+        IsCancelled = true;
+        foreach(SaleItem item in Items)
+        {
+            item.Cancel();
+        }
+    }
 }
