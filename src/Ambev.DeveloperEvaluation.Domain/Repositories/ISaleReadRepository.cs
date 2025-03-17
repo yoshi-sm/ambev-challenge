@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
-public interface ISaleReadRepository<T>
+public interface ISaleReadRepository
 {
-    Task<IEnumerable<T>> GetAllAsync();
-    Task<T?> GetByIdAsync(Guid id);
-    Task ReplaceAsync(T entity);
-    Task InsertAsync(T entity);
+    Task<IEnumerable<SaleDocument>> GetAllAsync();
+    Task<SaleDocument?> GetByIdAsync(Guid id);
+    Task ReplaceAsync(SaleDocument entity);
+    Task InsertAsync(SaleDocument entity);
 }

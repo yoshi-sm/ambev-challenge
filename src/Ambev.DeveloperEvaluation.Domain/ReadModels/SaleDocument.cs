@@ -1,16 +1,9 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ambev.DeveloperEvaluation.ORM.ReadModels;
+﻿
+namespace Ambev.DeveloperEvaluation.Domain.ReadModels;
 
 public class SaleDocument
 {
-    [BsonId]
-    public Guid Id { get; set; }
+    public virtual Guid Id { get; set; }
     public string SaleNumber { get; set; }
     public DateTime SaleDate { get; set; }
     public CustomerInfo Customer { get; set; }

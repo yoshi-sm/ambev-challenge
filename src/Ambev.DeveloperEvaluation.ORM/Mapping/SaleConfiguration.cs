@@ -33,5 +33,8 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 
         builder.Property<DateTime>("CreatedAt").IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
         builder.Property<DateTime?>("UpdatedAt");
+
+        builder.Ignore(i => i.BranchName);
+        builder.Ignore(i => i.CustomerName);
     }
 }

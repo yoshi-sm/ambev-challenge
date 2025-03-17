@@ -9,6 +9,7 @@ using Serilog.Exceptions.Core;
 using Serilog.Exceptions.EntityFrameworkCore.Destructurers;
 using Serilog.Sinks.SystemConsole.Themes;
 using Serilog.Templates;
+using System;
 using System.Diagnostics;
 
 namespace Ambev.DeveloperEvaluation.Common.Logging;
@@ -63,6 +64,13 @@ public static class LoggingExtension
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails(_destructuringOptionsBuilder)
                 .Filter.ByExcluding(_filterPredicate);
+
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var domainEventSinks = serviceProvider.GetServices<ILogEventSink>();
+            foreach (var sink in domainEventSinks)
+            {
+                loggerConfiguration.WriteTo.Sink(sink);
+            }
 
             if (Debugger.IsAttached)
             {

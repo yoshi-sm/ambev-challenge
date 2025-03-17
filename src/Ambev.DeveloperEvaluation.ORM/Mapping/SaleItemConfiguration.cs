@@ -24,5 +24,8 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
         builder.Property(i => i.Discount).IsRequired().HasColumnType("decimal(5, 2)");
         builder.Property(i => i.TotalPrice).IsRequired().HasColumnType("decimal(18, 2)");
         builder.Property(i => i.IsCancelled).IsRequired().HasDefaultValue(false);
+
+        builder.Ignore(i => i.ProductName);
+        builder.Ignore(i => i.UnitPrice);
     }
 }

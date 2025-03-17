@@ -1,22 +1,19 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.ReadModels;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Context;
 using Ambev.DeveloperEvaluation.ORM.ReadModels;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
-public class SaleReadRepository : ISaleReadRepository<SaleDocument>
+public class SaleReadRepository : ISaleReadRepository
 {
     private readonly ReadDbContext _readContext;
     private readonly IMongoCollection<SaleDocument> _saleDocuments;
     public SaleReadRepository(ReadDbContext readContext)
     {
         _readContext = readContext;
-        _saleDocuments = _readContext.GetCollection<SaleDocument>("SaleDocuments");
+        _saleDocuments = _readContext.GetCollection();
     }
 
     public async Task<IEnumerable<SaleDocument>> GetAllAsync()

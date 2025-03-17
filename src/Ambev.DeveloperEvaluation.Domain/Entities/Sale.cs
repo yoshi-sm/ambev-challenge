@@ -12,19 +12,25 @@ public class Sale : BaseEntity
     public string SaleNumber { get; private set; }
     public DateTime SaleDate { get; private set; }
     public Guid CustomerId { get; private set; }
+    public string CustomerName { get; private set; }
     public Guid BranchId { get; private set; }
+    public string BranchName { get; private set; }
     public decimal TotalAmount { get; private set; }
-    public bool IsCancelled { get; private set; }
+    public bool IsCancelled { get; private set; } = false;
     public ICollection<SaleItem> Items { get; private set; }
 
     public Sale() {}
 
-    public Sale(string saleNumber, DateTime saleDate, Guid customerId, Guid branchId, decimal totalAmount, bool isCancelled, ICollection<SaleItem> items)
+    public Sale(string saleNumber, DateTime saleDate, Guid customerId, string customerName, 
+        Guid branchId, string branchName, decimal totalAmount, 
+        bool isCancelled, ICollection<SaleItem> items)
     {
         SaleNumber = saleNumber;
         SaleDate = saleDate;
         CustomerId = customerId;
+        CustomerName = customerName;
         BranchId = branchId;
+        BranchName = branchName;
         TotalAmount = totalAmount;
         IsCancelled = isCancelled;
         Items = items;
@@ -33,9 +39,38 @@ public class Sale : BaseEntity
     public void Cancel()
     {
         IsCancelled = true;
-        foreach(SaleItem item in Items)
+        if(Items != null)
         {
-            item.Cancel();
+            foreach (SaleItem item in Items)
+            {
+                item.Cancel();
+            }
         }
     }
+    public void SetSale(ICollection<SaleItem> items)
+    {
+        Items = items;
+        GenerateSaleNumber();
+        CalculateTotalAmount();
+        SaleDate = DateTime.Now;
+    }
+
+    private void GenerateSaleNumber()
+    {
+        string datePart = DateTime.UtcNow.ToString("yyyyMMdd");
+        string randomPart = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        SaleNumber = $"SALE-{datePart}-{randomPart}";
+    }
+
+    private void CalculateTotalAmount()
+    {
+        var total = 0m;
+        foreach (var item in Items)
+        {
+            item.SetSaleItem(Id);
+            total += item.TotalPrice;
+        }
+        TotalAmount = total;
+    }
+
 }

@@ -9,12 +9,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.ORM;
+namespace Ambev.DeveloperEvaluation.ORM.Context;
 
 public class WriteDbContext : DbContext
 {
-    public DbSet<Sale> Sales {get; set;} 
-    public DbSet<SaleItem> SaleItems { get; set;}
+    public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleItem> SaleItems { get; set; }
 
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {

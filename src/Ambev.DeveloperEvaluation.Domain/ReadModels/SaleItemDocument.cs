@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.ORM.ReadModels;
+namespace Ambev.DeveloperEvaluation.Domain.ReadModels;
 
 public class SaleItemDocument
 {

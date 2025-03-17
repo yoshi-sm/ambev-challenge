@@ -5,18 +5,18 @@ using System.Text.Json;
 
 namespace Ambev.DeveloperEvaluation.ORM.Events;
 
-public class EventPublisher : IEventPublisher
+public class DomainEventPublisher : IEventPublisher
 {
-    private readonly ILogger<EventPublisher> _logger;
+    private readonly ILogger<DomainEventPublisher> _logger;
 
-    public EventPublisher(ILogger<EventPublisher> logger)
+    public DomainEventPublisher(ILogger<DomainEventPublisher> logger)
     {
         _logger = logger;
     }
 
     public Task PublishAsync<T>(T @event) where T : DomainEvent
     {
-        _logger.LogInformation($"Event published: {typeof(T).Name} - {JsonSerializer.Serialize(@event)}");
+        _logger.LogInformation($"Domain Event:{typeof(T).Name}:{JsonSerializer.Serialize(@event)}");
 
         return Task.CompletedTask;
     }
