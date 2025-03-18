@@ -1,4 +1,7 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Validation;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -26,6 +29,12 @@ public class SaleItem : BaseEntity
         Discount = discount;
         TotalPrice = totalPrice;
         IsCancelled = isCancelled;
+    }
+
+    public ValidationResult Validate()
+    {
+        var validator = new SaleItemValidator();
+        return validator.Validate(this);
     }
 
     public void Cancel()

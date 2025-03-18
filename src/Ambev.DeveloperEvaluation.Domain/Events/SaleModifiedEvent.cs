@@ -1,4 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.ReadModels;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +9,12 @@ using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.Domain.Events;
 
-public class SaleModifiedEvent : DomainEvent
+public class SaleModifiedEvent : DomainEvent, INotification
 {
-    public Guid SaleId { get; private set; }
-    public decimal NewTotalAmount { get; private set; }
-    public List<SaleItem> UpdatedItems { get; private set; }
+    public SaleDocument Sale { get; }
+
+    public SaleModifiedEvent(SaleDocument sale)
+    {
+        Sale = sale;
+    }
 }

@@ -1,4 +1,7 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Common;
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Validation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +39,12 @@ public class Sale : BaseEntity
         Items = items;
     }
 
+    public ValidationResult Validate()
+    {
+        var validator = new SaleValidator();
+        return validator.Validate(this);
+    }
+
     public void Cancel()
     {
         IsCancelled = true;
@@ -47,12 +56,13 @@ public class Sale : BaseEntity
             }
         }
     }
-    public void SetSale(ICollection<SaleItem> items)
+    public ValidationResult SetSale(ICollection<SaleItem> items)
     {
         Items = items;
         GenerateSaleNumber();
         CalculateTotalAmount();
         SaleDate = DateTime.Now;
+        return Validate();
     }
 
     private void GenerateSaleNumber()
@@ -62,15 +72,19 @@ public class Sale : BaseEntity
         SaleNumber = $"SALE-{datePart}-{randomPart}";
     }
 
-    private void CalculateTotalAmount()
+    public void CalculateTotalAmount()
     {
         var total = 0m;
-        foreach (var item in Items)
+        foreach (var item in Items.Where(x => !x.IsCancelled))
         {
             item.SetSaleItem(Id);
             total += item.TotalPrice;
         }
         TotalAmount = total;
+        if (total == 0)
+            Cancel();
     }
+
+    
 
 }

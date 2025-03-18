@@ -12,4 +12,6 @@ public interface ISaleWriteRepository
     Task<Sale?> GetByIdAsync(Guid id);
     Task CreateAsync(Sale sale);
     Task UpdateAsync(Sale sale);
+    Task<Sale?> GetBySaleItemIdAsync(Guid id);
+    Task UpdateSaleAsync(Sale sale, List<SaleItem> oldItems, List<SaleItem> newItems);
 }

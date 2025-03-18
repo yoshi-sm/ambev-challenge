@@ -1,8 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ReadModels;
+using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Domain.Events;
 
-public class SaleCreatedEvent : DomainEvent
+public class SaleCreatedEvent : DomainEvent, INotification
 {
     public SaleDocument Sale { get;}
 

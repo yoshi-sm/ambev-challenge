@@ -1,14 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.ORM.Context;
-using Ambev.DeveloperEvaluation.ORM.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
@@ -26,14 +20,34 @@ public class SaleWriteRepository : ISaleWriteRepository
         await _writeContext.SaveChangesAsync();
     }
 
+
     public async Task<Sale?> GetByIdAsync(Guid id)
     {
-        return await _writeContext.Sales.FindAsync(id);
+        return await _writeContext.Sales
+            .Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Sale?> GetBySaleItemIdAsync(Guid id)
+    {
+        return await _writeContext.Sales.Include(x => x.Items).FirstOrDefaultAsync(x => x.Items.Select(x => x.Id).Contains(id));
     }
 
     public async Task UpdateAsync(Sale sale)
     {
+
+        if (sale.Items.Count > 0)
+            _writeContext.SaleItems.UpdateRange(sale.Items);
         _writeContext.Sales.Update(sale);
+        await _writeContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateSaleAsync(Sale sale, List<SaleItem> oldItems,  List<SaleItem> newItems)
+    {
+        oldItems.ForEach(x => x.Cancel());
+        _writeContext.SaleItems.UpdateRange(oldItems);
+        await _writeContext.SaleItems.AddRangeAsync(newItems);
+        _writeContext.Sales.Update(sale);
+
         await _writeContext.SaveChangesAsync();
     }
 }

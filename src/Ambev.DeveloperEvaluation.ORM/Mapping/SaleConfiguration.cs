@@ -21,7 +21,8 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.Property(i => i.CustomerId).IsRequired().HasColumnType("uuid");
         builder.Property(i => i.BranchId).IsRequired().HasColumnType("uuid");
         builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
-        builder.Property(s => s.SaleDate).IsRequired().HasColumnType("timestamp");
+        builder.Property(s => s.SaleDate).IsRequired().HasColumnType("timestamp")
+            .HasConversion(v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified), v => v);
         builder.Property(s => s.TotalAmount).IsRequired().HasColumnType("decimal(18, 2)");
         builder.Property(s => s.IsCancelled).IsRequired().HasDefaultValue(false);
         

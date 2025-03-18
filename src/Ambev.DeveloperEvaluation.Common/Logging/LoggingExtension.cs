@@ -65,13 +65,6 @@ public static class LoggingExtension
                 .Enrich.WithExceptionDetails(_destructuringOptionsBuilder)
                 .Filter.ByExcluding(_filterPredicate);
 
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var domainEventSinks = serviceProvider.GetServices<ILogEventSink>();
-            foreach (var sink in domainEventSinks)
-            {
-                loggerConfiguration.WriteTo.Sink(sink);
-            }
-
             if (Debugger.IsAttached)
             {
                 loggerConfiguration.Enrich.WithProperty("DebuggerAttached", Debugger.IsAttached);

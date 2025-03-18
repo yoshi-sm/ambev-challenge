@@ -6,7 +6,6 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.Context;
-using Ambev.DeveloperEvaluation.ORM.Events;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +24,6 @@ public class Program
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
-
-            builder.Services.AddSingleton<ILogEventSink, DomainEventSink>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

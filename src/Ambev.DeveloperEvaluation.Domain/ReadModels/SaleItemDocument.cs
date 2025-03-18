@@ -10,6 +10,7 @@ namespace Ambev.DeveloperEvaluation.Domain.ReadModels;
 public class SaleItemDocument
 {
     public Guid Id { get; set; }
+    public Guid SaleId { get; set; }
     public ProductInfo Product { get; set; }
     public int Quantity { get; set; }
     public decimal Discount { get; set; }

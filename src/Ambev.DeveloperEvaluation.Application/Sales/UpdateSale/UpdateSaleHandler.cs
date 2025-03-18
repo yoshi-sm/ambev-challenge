@@ -1,53 +1,63 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
+﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
-using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 
-public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, SaleResult>
+namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+
+public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult>
 {
     private readonly ISaleWriteRepository _writeRepository;
+    private readonly ISaleReadRepository _readRepository;
     private readonly IFakeRepository _fakeRepository;
     private readonly IMapper _mapper;
     private readonly IPublisher _eventPublisher;
 
-    public CreateSaleHandler(ISaleWriteRepository writeRepository, IMapper mapper, IFakeRepository fakeRepository, IPublisher eventPublisher)
+    public UpdateSaleHandler(ISaleWriteRepository writeRepository, ISaleReadRepository readRepository, 
+        IFakeRepository fakeRepository, IMapper mapper, IPublisher eventPublisher)
     {
-        _eventPublisher = eventPublisher;
         _writeRepository = writeRepository;
-        _mapper = mapper;
+        _readRepository = readRepository;
         _fakeRepository = fakeRepository;
+        _mapper = mapper;
+        _eventPublisher = eventPublisher;
     }
 
-
-    public async Task<SaleResult> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
+    public async Task<SaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
     {
-        var (sale, validation) = GenerateSale(request);
+        var mongoDoc = await _readRepository.GetByIdAsync(request.Id);
+        if (mongoDoc == null)
+            return SaleResult.Failure([], StatusCodes.Status404NotFound);
+        
+        var sale = _mapper.Map<Sale>(mongoDoc);
+        var (newSale, validation) = UpdateSale(request, sale);
         if (!validation.IsValid)
-            return SaleResult.Failure(validation.Errors, StatusCodes.Status400BadRequest);
+            return SaleResult.Failure(validation.Errors, StatusCodes.Status400BadRequest); 
 
-        await _writeRepository.CreateAsync(sale);
-
+        var oldItems = sale.Items.ToList();
+        var newItems = newSale.Items.ToList();
+        _mapper.Map(newSale, sale);
+        await _writeRepository.UpdateSaleAsync(sale, oldItems, newItems);
         var saleDocument = _mapper.Map<SaleDocument>(sale);
-        await _eventPublisher.Publish(new SaleCreatedEvent(saleDocument));
+        await _eventPublisher.Publish(new SaleModifiedEvent(saleDocument));
 
-        return SaleResult.Ok(StatusCodes.Status201Created, saleDocument);
+        return SaleResult.Ok(StatusCodes.Status200OK, saleDocument);
     }
 
-    private (Sale, ValidationResult) GenerateSale(CreateSaleCommand request)
+    private (Sale, ValidationResult) UpdateSale(UpdateSaleCommand request, Sale oldSale)
     {
         var productIds = request.Items.Select(x => x.ProductId);
         var (customer, branch, products) = GetExternalData(request.CustomerId, request.BranchId, productIds);
+
         var sale = _mapper.Map<Sale>((request, customer, branch));
         var saleItems = MapSaleItems(request.Items, products, sale.Id);
+
         var validation = sale.SetSale(saleItems);
         return (sale, validation);
     }
@@ -74,4 +84,3 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, SaleResult>
         return saleItems;
     }
 }
-

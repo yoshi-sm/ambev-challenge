@@ -1,5 +1,4 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ReadModels;
-using Ambev.DeveloperEvaluation.ORM.ReadModels;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
