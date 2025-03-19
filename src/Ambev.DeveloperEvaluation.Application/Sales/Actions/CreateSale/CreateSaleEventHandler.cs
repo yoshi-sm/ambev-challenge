@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.CreateSale;
 
 public class CreateSaleEventHandler : INotificationHandler<SaleCreatedEvent>
 {

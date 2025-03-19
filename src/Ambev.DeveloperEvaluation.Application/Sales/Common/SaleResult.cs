@@ -1,20 +1,17 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using FluentValidation.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Common;
 
-public class SaleResult
+public class SaleResult<T>
 {
     public bool Success { get; set; }
     public IEnumerable<ValidationFailure>? Errors { get; set; }
     public int StatusCode { get; set; }
-    public object? Data { get; set; }
+    public T? Data { get; set; }
+    public long TotalItems { get; set; }
 
     public SaleResult() { }
 
@@ -27,16 +24,17 @@ public class SaleResult
         return Errors.Select(f => (ValidationErrorDetail)f).ToList();
     }
 
-    public static SaleResult Ok(int statusCode, object? data)
-        => new SaleResult()
+    public static SaleResult<T> Ok(int statusCode, T? data, long totalItems = 0)
+        => new SaleResult<T>()
         {
             Success = true,
             StatusCode = statusCode,
-            Data = data
+            Data = data,
+            TotalItems = totalItems
         };
 
-    public static SaleResult Failure(IEnumerable<ValidationFailure> errors, int statusCode)
-        => new SaleResult()
+    public static SaleResult<T> Failure(IEnumerable<ValidationFailure> errors, int statusCode)
+        => new SaleResult<T>()
         {
             Success = false,
             StatusCode = statusCode,

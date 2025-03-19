@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -10,14 +11,13 @@ using System.Threading.Tasks;
 
 namespace Ambev.DeveloperEvaluation.ORM.Helper;
 
-public class MongoFilterHelper
+public class MongoSortFilterHelper
 {
     public static FilterDefinition<SaleDocument> CreateFilter(SaleDocumentFilter filter)
     {
         var builder = Builders<SaleDocument>.Filter;
         var filters = new List<FilterDefinition<SaleDocument>>();
 
-        // Add filters only if the parameter has a value
         if (!string.IsNullOrWhiteSpace(filter.SaleNumber))
             filters.Add(builder.Regex(x => x.SaleNumber, new BsonRegularExpression(filter.SaleNumber, "i")));
 
@@ -42,9 +42,41 @@ public class MongoFilterHelper
         if (filter.MaxTotalAmount.HasValue)
             filters.Add(builder.Lte(x => x.TotalAmount, filter.MaxTotalAmount.Value));
 
-        // Combine all filters with AND operator
         return filters.Count > 0
             ? builder.And(filters)
             : builder.Empty;
+    }
+
+    public static SortDefinition<SaleDocument> CreateSortDefinition(string sortBy, string sortOrder)
+    {
+        var sortBuilder = Builders<SaleDocument>.Sort;
+
+        bool isDescending = string.Equals(sortOrder, "desc", StringComparison.OrdinalIgnoreCase);
+
+        switch (sortBy.ToLower())
+        {
+            case "saledate":
+                return isDescending
+                    ? sortBuilder.Descending(x => x.SaleDate)
+                    : sortBuilder.Ascending(x => x.SaleDate);
+
+            case "customername":
+                return isDescending
+                    ? sortBuilder.Descending(x => x.Customer.Name)
+                    : sortBuilder.Ascending(x => x.Customer.Name);
+
+            case "branchname":
+                return isDescending
+                    ? sortBuilder.Descending(x => x.Branch.Name)
+                    : sortBuilder.Ascending(x => x.Branch.Name);
+
+            case "totalamount":
+                return isDescending
+                    ? sortBuilder.Descending(x => x.TotalAmount)
+                    : sortBuilder.Ascending(x => x.TotalAmount);
+
+            default:
+                return sortBuilder.Descending(x => x.SaleDate);
+        }
     }
 }

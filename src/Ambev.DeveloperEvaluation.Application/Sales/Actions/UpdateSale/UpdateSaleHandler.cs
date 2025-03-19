@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+﻿using Ambev.DeveloperEvaluation.Application.Sales.Actions.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
@@ -9,9 +10,9 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.UpdateSale;
 
-public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult>
+public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult<SaleDocument>>
 {
     private readonly ISaleWriteRepository _writeRepository;
     private readonly ISaleReadRepository _readRepository;
@@ -19,7 +20,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult>
     private readonly IMapper _mapper;
     private readonly IPublisher _eventPublisher;
 
-    public UpdateSaleHandler(ISaleWriteRepository writeRepository, ISaleReadRepository readRepository, 
+    public UpdateSaleHandler(ISaleWriteRepository writeRepository, ISaleReadRepository readRepository,
         IFakeRepository fakeRepository, IMapper mapper, IPublisher eventPublisher)
     {
         _writeRepository = writeRepository;
@@ -29,16 +30,16 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult>
         _eventPublisher = eventPublisher;
     }
 
-    public async Task<SaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
+    public async Task<SaleResult<SaleDocument>> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
     {
         var mongoDoc = await _readRepository.GetByIdAsync(request.Id);
         if (mongoDoc == null)
-            return SaleResult.Failure([], StatusCodes.Status404NotFound);
-        
+            return SaleResult<SaleDocument>.Failure([], StatusCodes.Status404NotFound);
+
         var sale = _mapper.Map<Sale>(mongoDoc);
         var (newSale, validation) = UpdateSale(request, sale);
         if (!validation.IsValid)
-            return SaleResult.Failure(validation.Errors, StatusCodes.Status400BadRequest); 
+            return SaleResult<SaleDocument>.Failure(validation.Errors, StatusCodes.Status400BadRequest);
 
         var oldItems = sale.Items.ToList();
         var newItems = newSale.Items.ToList();
@@ -47,7 +48,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult>
         var saleDocument = _mapper.Map<SaleDocument>(sale);
         await _eventPublisher.Publish(new SaleModifiedEvent(saleDocument));
 
-        return SaleResult.Ok(StatusCodes.Status200OK, saleDocument);
+        return SaleResult<SaleDocument>.Ok(StatusCodes.Status200OK, saleDocument);
     }
 
     private (Sale, ValidationResult) UpdateSale(UpdateSaleCommand request, Sale oldSale)

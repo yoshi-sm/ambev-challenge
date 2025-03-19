@@ -3,7 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.CancelSale;
 
 public class CancelSaleEventHandler : INotificationHandler<SaleCancelledEvent>
 {

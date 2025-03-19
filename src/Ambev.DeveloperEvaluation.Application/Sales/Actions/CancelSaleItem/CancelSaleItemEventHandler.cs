@@ -1,5 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
-using Ambev.DeveloperEvaluation.Domain.Events;
+﻿using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.CancelSaleItem;
 
 public class CancelSaleItemEventHandler : INotificationHandler<ItemCancelledEvent>
 {

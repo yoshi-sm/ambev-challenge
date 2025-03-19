@@ -19,16 +19,22 @@ public class SaleReadRepository : ISaleReadRepository
         _saleDocuments = _readContext.GetCollection();
     }
 
-    public async Task<IEnumerable<SaleDocument>> GetAllAsync(SaleDocumentFilter filter)
+    public async Task<(IEnumerable<SaleDocument>, long)> GetAllAsync(SaleDocumentFilter filter)
     {
-        var mongoFilter = MongoFilterHelper.CreateFilter(filter);
+        var mongoFilter = MongoSortFilterHelper.CreateFilter(filter);
         int skip = (filter.PageNumber - 1) * filter.PageSize;
 
-        return await _saleDocuments
+        var mongoSort = MongoSortFilterHelper.CreateSortDefinition(filter.SortField, filter.SortOrder);
+
+        var count = await _saleDocuments.CountDocumentsAsync(mongoFilter);
+        var data = await _saleDocuments
             .Find(mongoFilter)
+            .Sort(mongoSort)
             .Skip(skip)
             .Limit(filter.PageSize)
             .ToListAsync();
+
+        return (data, count);
     }
 
     public async Task<SaleDocument?> GetByIdAsync(Guid id)

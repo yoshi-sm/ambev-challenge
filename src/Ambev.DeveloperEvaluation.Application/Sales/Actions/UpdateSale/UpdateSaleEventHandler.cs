@@ -1,5 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Domain.Events;
+﻿using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.UpdateSale;
 
 public class UpdateSaleEventHandler : INotificationHandler<SaleModifiedEvent>
 {

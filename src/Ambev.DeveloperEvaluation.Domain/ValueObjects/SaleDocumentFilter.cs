@@ -16,6 +16,9 @@ public class SaleDocumentFilter
     public bool? IsCancelled { get; set; }
     public decimal? MinTotalAmount { get; set; }
     public decimal? MaxTotalAmount { get; set; }
-    public int PageNumber { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public string SortField { get; set; }
+    public string SortOrder { get; set; }
 }
+

@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Application.Sales.Common;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -7,16 +8,16 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Actions.CancelSaleItem;
 
-public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, SaleResult>
+public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, SaleResult<SaleDocument>>
 {
     private readonly ISaleReadRepository _saleReadRepository;
     private readonly ISaleWriteRepository _saleWriteRepository;
     private readonly IMapper _mapper;
     private readonly IPublisher _eventPublisher;
 
-    public CancelSaleItemHandler(ISaleReadRepository saleReadRepository, 
+    public CancelSaleItemHandler(ISaleReadRepository saleReadRepository,
         ISaleWriteRepository saleWriteRepository, IMapper mapper, IPublisher eventPublisher)
     {
         _saleReadRepository = saleReadRepository;
@@ -25,11 +26,11 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Sale
         _eventPublisher = eventPublisher;
     }
 
-    public async Task<SaleResult> Handle(CancelSaleItemCommand request, CancellationToken cancellationToken)
+    public async Task<SaleResult<SaleDocument>> Handle(CancelSaleItemCommand request, CancellationToken cancellationToken)
     {
         var mongoDoc = await _saleReadRepository.GetSaleByItemIdAsync(request.ItemId);
         if (mongoDoc == null)
-            return SaleResult.Failure([], StatusCodes.Status404NotFound);
+            return SaleResult<SaleDocument>.Failure([], StatusCodes.Status404NotFound);
 
         var sale = _mapper.Map<Sale>(mongoDoc);
 
@@ -39,6 +40,6 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Sale
         await _saleWriteRepository.UpdateAsync(sale);
         var saleDocument = _mapper.Map<SaleDocument>(sale);
         await _eventPublisher.Publish(new ItemCancelledEvent(saleDocument));
-        return SaleResult.Ok(StatusCodes.Status200OK, saleDocument);
+        return SaleResult<SaleDocument>.Ok(StatusCodes.Status200OK, saleDocument);
     }
 }

@@ -11,7 +11,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
 public interface ISaleReadRepository
 {
-    Task<IEnumerable<SaleDocument>> GetAllAsync(SaleDocumentFilter filter);
+    Task<(IEnumerable<SaleDocument>, long)> GetAllAsync(SaleDocumentFilter filter);
     Task<SaleDocument?> GetByIdAsync(Guid id);
     Task ReplaceAsync(SaleDocument entity);
     Task InsertAsync(SaleDocument entity);

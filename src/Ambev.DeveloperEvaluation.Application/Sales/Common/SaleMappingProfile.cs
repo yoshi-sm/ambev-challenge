@@ -1,6 +1,6 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.GetAllSales;
-using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+﻿using Ambev.DeveloperEvaluation.Application.Sales.Actions.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.Actions.GetAllSales;
+using Ambev.DeveloperEvaluation.Application.Sales.Actions.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
@@ -11,11 +11,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales;
+namespace Ambev.DeveloperEvaluation.Application.Sales.Common;
 
 public class SaleMappingProfile : Profile
 {
-    public SaleMappingProfile() 
+    public SaleMappingProfile()
     {
         CreateMap<Sale, Sale>()
             .ForMember(dest => dest.SaleNumber, opt => opt.Ignore())
