@@ -13,5 +13,5 @@ public interface ISaleWriteRepository
     Task CreateAsync(Sale sale);
     Task UpdateAsync(Sale sale);
     Task<Sale?> GetBySaleItemIdAsync(Guid id);
-    Task UpdateSaleCancelItemsAsync(Sale sale, List<SaleItem> oldItems, List<SaleItem> newItems);
+    Task UpdateSaleCancelItemsAsync(Sale sale);
 }

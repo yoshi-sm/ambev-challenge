@@ -41,13 +41,11 @@ public class SaleWriteRepository : ISaleWriteRepository
         await _writeContext.SaveChangesAsync();
     }
 
-    public async Task UpdateSaleCancelItemsAsync(Sale sale, List<SaleItem> oldItems,  List<SaleItem> newItems)
+    public async Task UpdateSaleCancelItemsAsync(Sale sale)
     {
-        oldItems.ForEach(x => x.Cancel());
-        _writeContext.SaleItems.UpdateRange(oldItems);
-        await _writeContext.SaleItems.AddRangeAsync(newItems);
+        _writeContext.SaleItems.UpdateRange(sale.Items.Where(x => x.IsCancelled));
+        await _writeContext.SaleItems.AddRangeAsync(sale.Items.Where(x => !x.IsCancelled));
         _writeContext.Sales.Update(sale);
-
         await _writeContext.SaveChangesAsync();
     }
 }

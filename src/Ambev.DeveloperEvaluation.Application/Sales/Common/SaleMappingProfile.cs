@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.Actions.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.Actions.GetAllSales;
 using Ambev.DeveloperEvaluation.Application.Sales.Actions.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.Dto;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using Ambev.DeveloperEvaluation.Domain.ValueObjects;
@@ -33,7 +34,7 @@ public class SaleMappingProfile : Profile
             .ForMember(dest => dest.BranchName, opt => opt.MapFrom(src => src.Branch.Name))
             .ForMember(dest => dest.Items, opt => opt.Ignore());
 
-        CreateMap<(CreateSaleItemCommand Command, ProductInfo Product), SaleItem>()
+        CreateMap<(SaleItemDto Command, ProductInfo Product), SaleItem>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Command.ProductId))
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
@@ -49,7 +50,7 @@ public class SaleMappingProfile : Profile
             .ForMember(dest => dest.BranchName, opt => opt.MapFrom(src => src.Branch.Name))
             .ForMember(dest => dest.Items, opt => opt.Ignore());
 
-        CreateMap<(UpdateSaleItemCommand Command, ProductInfo Product), SaleItem>()
+        CreateMap<(SaleItemDto Command, ProductInfo Product), SaleItem>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Command.ProductId))
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
