@@ -1,5 +1,4 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.Common;
-using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.ReadModels;
 using MediatR;
 using System;

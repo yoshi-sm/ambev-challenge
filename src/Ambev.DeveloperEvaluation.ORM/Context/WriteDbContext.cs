@@ -34,7 +34,7 @@ public class WriteDbContextFactory : IDesignTimeDbContextFactory<WriteDbContext>
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Development.json")
+            .AddJsonFile("appsettings.json")
             .Build();
 
         var builder = new DbContextOptionsBuilder<WriteDbContext>();
