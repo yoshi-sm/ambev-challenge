@@ -84,7 +84,4 @@ public class Sale : BaseEntity
         if (total == 0)
             Cancel();
     }
-
-    
-
 }

@@ -21,7 +21,14 @@ public class SaleValidator : AbstractValidator<Sale>
 
         // Validate that each item is unique by product ID
         RuleFor(sale => sale.Items)
-            .Must(items => items.Where(x => !x.IsCancelled).Select(i => i.ProductId).Distinct().Count() == items.Count)
+            .Must(items =>
+            {
+                var activeItems = items.Where(x => !x.IsCancelled).ToList();
+                if (activeItems.Count <= 1)
+                    return true;
+                return activeItems.Select(i => i.ProductId).Distinct().Count() == activeItems.Count;
+            })
+            .When(sale => sale.Items != null && sale.Items.Any())
             .WithMessage("Duplicate products are not allowed in a sale");
 
         // Apply validation for each item

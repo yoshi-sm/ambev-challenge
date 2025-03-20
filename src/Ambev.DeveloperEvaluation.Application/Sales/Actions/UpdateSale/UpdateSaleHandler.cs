@@ -44,7 +44,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult<S
         var oldItems = sale.Items.ToList();
         var newItems = newSale.Items.ToList();
         _mapper.Map(newSale, sale);
-        await _writeRepository.UpdateSaleAsync(sale, oldItems, newItems);
+        await _writeRepository.UpdateSaleCancelItemsAsync(sale, oldItems, newItems);
         var saleDocument = _mapper.Map<SaleDocument>(sale);
         await _eventPublisher.Publish(new SaleModifiedEvent(saleDocument));
 
@@ -57,7 +57,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult<S
         var (customer, branch, products) = GetExternalData(request.CustomerId, request.BranchId, productIds);
 
         var sale = _mapper.Map<Sale>((request, customer, branch));
-        var saleItems = MapSaleItems(request.Items, products, sale.Id);
+        var saleItems = MapSaleItems(request.Items, products);
 
         var validation = sale.SetSale(saleItems);
         return (sale, validation);
@@ -72,7 +72,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, SaleResult<S
         return (customer, branch, products);
     }
 
-    private List<SaleItem> MapSaleItems(List<CreateSaleItemCommand> commandItems, IEnumerable<ProductInfo> products, Guid id)
+    private List<SaleItem> MapSaleItems(List<CreateSaleItemCommand> commandItems, IEnumerable<ProductInfo> products)
     {
         List<SaleItem> saleItems = new();
         foreach (var commandItem in commandItems)

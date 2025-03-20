@@ -41,7 +41,7 @@ public class SaleWriteRepository : ISaleWriteRepository
         await _writeContext.SaveChangesAsync();
     }
 
-    public async Task UpdateSaleAsync(Sale sale, List<SaleItem> oldItems,  List<SaleItem> newItems)
+    public async Task UpdateSaleCancelItemsAsync(Sale sale, List<SaleItem> oldItems,  List<SaleItem> newItems)
     {
         oldItems.ForEach(x => x.Cancel());
         _writeContext.SaleItems.UpdateRange(oldItems);
